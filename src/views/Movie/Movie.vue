@@ -22,6 +22,7 @@
 
 <script>
 	import MHeader from "@/components/MHeader"
+    import { getPlayingData  } from '@/api/request'
 	export default {
 		name: 'movie',
 		components: {
