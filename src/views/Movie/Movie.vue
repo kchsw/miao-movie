@@ -12,7 +12,11 @@
                 <i class="iconfont icon-sousuo"></i>
             </router-link>
   		</div>
-  		<router-view/>
+        <div class="content">
+            <keep-alive>
+                <router-view/>
+            </keep-alive>
+        </div>		
 	</div>
 </template>
 
@@ -44,8 +48,12 @@
     			display: flex;
     			align-items: center;
     			&.router-link-active{
-	    			border-bottom: 2px solid red;
+	    			border-bottom: 2px solid #ef4238;
+	    			color: #ef4238;
 	    		}
+    		}
+    		.hot-item{
+    			padding: 0 12px;
     		}
     		.city{
     			font-size: 22px;
@@ -53,8 +61,12 @@
     		.search{
     			.iconfont{
     				font-size: 28px;
+    				color: #ef4238;
     			}
     		}
 		}
+        .content{
+            height: calc(100vh - 160px)
+        }
 	}
 </style>

@@ -38,7 +38,7 @@
     			text-align: center;
     			font-size: 22px;   
     			.iconfont{
-    				font-size: 26px;
+    				font-size: 28px;
     			}
     			&.active{
     				color: #f03d37;
