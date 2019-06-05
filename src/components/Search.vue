@@ -3,45 +3,69 @@
 		<div class="search-input">
 			<div class="input-wrapper">
                 <i class="iconfont icon-sousuo"></i>
-                <input type="text">
+                <input type="text" v-model="keyword">
             </div>
 		</div>
 		<div class="search-result">
-			<h3>电影/电视剧/综艺</h3>
-			<div class="result-list">
-				<div class="result-item">
-					<div class="pic-show"><img src="https://p0.meituan.net/movie/f29c0f9ff0340d00085f4bc1a395ecf02603950.jpg@160w_220h_1e_1c"></div>
-	                <div class="info-list">
-	                    <h2>无名之辈</h2>
-	                    <span class="grade">9.2</span>
-	                    <p>A Cool Fish</p>
-                        <p>剧情,喜剧,犯罪</p>
-                        <p>2018-11-16</p>
-	                </div>	              
+			<div class="result-wrapper">
+				<h3>电影/电视剧/综艺</h3>
+				<div class="result-list">
+					<div class="result-item" v-for="item in movieList" :key="item.id">
+						<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
+		                <div class="info-list">
+		                    <h2>{{item.nm}}</h2>
+		                    <span class="grade">{{item.sc}}</span>
+		                    <p>{{item.enm}}</p>
+	                        <p>{{item.cat}}</p>
+	                        <p>{{item.pubDesc}}</p>
+		                </div>	              
+					</div>
 				</div>
-				<div class="result-item">
-					<div class="pic-show"><img src="https://p0.meituan.net/movie/f29c0f9ff0340d00085f4bc1a395ecf02603950.jpg@160w_220h_1e_1c"></div>
-	                <div class="info-list">
-	                    <h2>无名之辈</h2>
-	                    <span class="grade">9.2</span>
-	                    <p>A Cool Fish</p>
-                        <p>剧情,喜剧,犯罪</p>
-                        <p>2018-11-16</p>
-	                </div>	              
-				</div>
-			</div>
+			</div>		
 		</div>
 	</div>
 </template>
 
 <script>
+	import { getSearchData } from '@/api/request'
 	export default {
-		name: 'search'
+		name: 'search',
+		data(){
+			return {
+				movieList: [],
+				keyword: '',
+				timer: null
+			}
+		},
+		methods: {
+			async getData(){
+				const result = await getSearchData(10, this.keyword)
+				const movies = result.data.data.movies
+				if(result.data.msg === 'ok' && movies.list.length){
+					this.movieList = movies.list
+				}
+			}
+		},
+		watch:{
+			keyword(){
+				if(this.timer){
+					clearTimeout(this.timer)
+				}
+				if(!this.keyword){
+					this.movieList = []
+					return
+				}
+				this.timer = setTimeout(() => {
+					this.getData()
+				}, 500)
+			}
+		}	
 	}
 </script>
 
 <style lang="scss" scoped>
 	#search{
+		height: 100%;
 		.search-input{
 			padding: 10px 10px; 
 			background-color: #f5f5f5; 
@@ -63,7 +87,7 @@
 					line-height: 30px;
 					font-size: 28px;
 					border: none; 
-					color: #333; 
+					color: #999; 
 					padding: 10px 0; 
 					outline: none; 
 					margin-left: 5px;
@@ -71,6 +95,10 @@
 			}
 		}
 		.search-result{
+			height: calc(100vh - 233px);
+			overflow: auto;
+			box-sizing: border-box;
+    		padding-bottom: 10px;
 			h3{
 				font-size: 24px; 
 				color: #999; 
@@ -98,7 +126,7 @@
 						position: relative;
 						h2{
 							width: 320px;
-							font-size: 30px; 
+							font-size: 28px; 
 							line-height: 42px; 					
 							overflow: hidden; 
 							white-space: nowrap; 

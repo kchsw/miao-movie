@@ -21,7 +21,7 @@
 		width: 100%;
 		line-height: 50px;
 		height: 50px;
-		font-size:24px;
+		font-size:26px;
 		background: #e54847;
 		text-align: center;
 		color: #fff;

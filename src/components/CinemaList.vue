@@ -1,48 +1,61 @@
 <template>
 	<div id="cinema-list">
-		<div class="cinema-item">
+		<div class="cinema-item" v-for="item in cinemaList" :key="item.id">
 			<div class="name">
-                <span>大地影院(澳东世纪店)</span>
-                <span class="money"><span class="price">22.9</span> 元起</span>
+                <span>{{item.nm}}</span>
+                <span class="money"><span class="price">{{item.sellPrice}}</span> 元起</span>
             </div>
             <div class="address">
-                <span>金州区大连经济技术开发区澳东世纪3层</span>
-                <span>1763.5km</span>
+                <div>地址: {{item.addr}}</div>
+                <div>距离: {{item.distance}}</div>
             </div>
             <div class="card">
-                <div class="type">小吃</div>
-                <div class="type">折扣卡</div>
-            </div>
-		</div>
-		<div class="cinema-item">
-			<div class="name">
-                <span>大地影院(澳东世纪店)</span>
-                <span class="money"><span class="price">22.9</span> 元起</span>
-            </div>
-            <div class="address">
-                <span>金州区大连经济技术开发区澳东世纪3层</span>
-                <span>1763.5km</span>
-            </div>
-            <div class="card">
-               	<div class="type">小吃</div>
-                <div class="type bl">折扣卡</div>
+                <div class="type" 
+                	v-for="(num,key) in item.tag"
+                	v-if="num===1"
+                	:class="type[key].class"
+                >{{type[key].desc}}</div>          
             </div>
 		</div>
 	</div>
 </template>
 
 <script>
+	import { getCinemaData } from '@/api/request'
 	export default {
-		name: 'cinema-list'
+		name: 'cinema-list',
+		data(){
+			return {
+				cinemaList: []
+			}
+		},
+		methods: {
+			async getData(){
+				const result = await getCinemaData(10)
+				if(result.data.msg === 'ok'){
+					let cinemas = result.data.data.cinemas
+					this.cinemaList = cinemas			
+				}
+			}
+		},
+		created(){
+			this.getData()
+			this.type = {
+				allowRefund: { desc: "改签", class: 'bl' },
+				endorse: { desc: "退", class: 'bl' },
+				sell: { desc: "折扣卡", class: 'ol' },
+				snack: { desc: "小吃", class: 'ol' }
+			}
+		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	#cinema-list{
 		height: calc(100vh - 160px);
-		padding: 0 20px 20px;
+		padding: 0 22px 22px;
 		box-sizing: border-box;
-		overflow: auto;
+		overflow: hidden;
 		&::-webkit-scrollbar{
 			background-color:transparent;
     		width:0;
@@ -51,10 +64,10 @@
 			padding: 12px 0;
 			border-bottom:1px solid #e6e6e6;
 			div{
-				margin-top: 12px;
+				// margin-top: 12px;
 			}
 			.name{
-				font-size: 30px;
+				font-size: 28px;
 				.money{
 					margin-left: 14px;
 					font-size: 20px; 
@@ -65,13 +78,16 @@
 				}
 			}
 			.address{
-				font-size: 24px; 
+				overflow: hidden;
+				font-size: 22px; 
 				color:#666;
-				span{
-					&:nth-of-type(2){ 
-						float:right; 
-					}
-				}
+				line-height: 30px;
+				margin: 10px 0;
+				// span{
+				// 	&:nth-of-type(2){ 
+				// 		float:right; 
+				// 	}
+				// }
 			}
 			.card{
 				display: flex;
@@ -84,6 +100,10 @@
 					font-size: 18px; 
 					margin: 0 10px 0 0;
 					&.bl{
+						color: #f90; 
+						border: 1px solid #f90;
+					}
+					&.ol{
 						color: #589daf; 
 						border: 1px solid #589daf;
 					}
