@@ -4,7 +4,7 @@
   		</m-header>
   		<div class="menu-bar">
   			<router-link tag="div" to="/movie/city" class="city menu-item">
-                <span>北京</span><i class="iconfont icon-lower-triangle"></i>
+                <span>{{$store.state.city.city}}</span><i class="iconfont icon-lower-triangle"></i>
             </router-link>         
             <router-link tag="div" to="/movie/playing" class="hot-item menu-item">正在热映</router-link>
             <router-link tag="div" to="/movie/coming" class="hot-item menu-item">即将上映</router-link>

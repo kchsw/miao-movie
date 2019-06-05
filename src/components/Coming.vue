@@ -1,31 +1,39 @@
 <template>
 	<div id="coming">
-		<div class="movie">
-			<div class="movie-item" v-for="item in comingList" :key="item.id">
-				<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
-                <div class="info-list">
-                    <h2>{{item.nm}}</h2>
-                    <p><span class="grade">{{item.wish}}</span> 人想看</p>
-                    <p>主演: {{item.star}}</p>
-                    <p>{{item.showInfo}}</p>
-                    <img class="version" :src='version' v-if="item.version">
-                </div>
-                <div class="btn-pre">
-                    预售
-                </div>
+		<scroll class="recommend-content" :data="comingList" ref="scroll">
+			<div class="movie">
+				<div class="movie-item" v-for="item in comingList" :key="item.id">
+					<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
+	                <div class="info-list">
+	                    <h2>{{item.nm}}</h2>
+	                    <p><span class="grade">{{item.wish}}</span> 人想看</p>
+	                    <p>主演: {{item.star}}</p>
+	                    <p>{{item.showInfo}}</p>
+	                    <img class="version" :src='version' v-if="item.version">
+	                </div>
+	                <div class="btn-pre">
+	                    预售
+	                </div>
+				</div>
 			</div>
-		</div>
+		</scroll>
+		<loading v-show="loaing"></loading>
 	</div>
 </template>
 
 <script>
 	import { getMovieComingData } from '@/api/request'
+	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'coming',
+		components: {
+			Scroll
+		},
 		data(){
 			return {
 				comingList: [],
-				version: require("@/assets/maxs.png")
+				version: require("@/assets/maxs.png"),
+				loaing: true
 			}
 		},
 		methods: {
@@ -34,6 +42,7 @@
 				if(result.data.msg === 'ok'){
 					let comingList = result.data.data.comingList
 					this.comingList = comingList
+					this.loaing = false
 				}
 			}
 		},
@@ -46,7 +55,7 @@
 <style lang="scss" scoped>
 	#coming{
 		height: 100%;
-		padding: 0 16px;
+		padding: 0 16px 30px;
 		box-sizing: border-box;
 		overflow: hidden;
 		&::-webkit-scrollbar{

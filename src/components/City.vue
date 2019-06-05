@@ -1,56 +1,69 @@
 <template>
 	<div id="city" ref="city">
-		<div class="city-list">
-			<div class="hot-area">
-				<div class="hot-title">热门城市</div>
-				<ul class="hot-list">
-					<li class="hot-item" v-for="item in hotlist" :key='item.id'>
-						<div class="city-item">{{item.nm}}</div>
-					</li>
-                    <!-- <li class="hot-item"><div class="city-item">北京</div></li>
-                    <li class="hot-item"><div class="city-item">北京</div></li>
-                    <li class="hot-item"><div class="city-item">北京</div></li>
-                    <li class="hot-item"><div class="city-item">北京</div></li> -->
+		<loading v-if="loading"></loading>
+		<scroll v-else class="recommend-content" :data="cityList" ref="scroll">
+			<div class="city-list">
+				<div class="hot-area">
+					<div class="hot-title">热门城市</div>
+					<ul class="hot-list">
+						<li class="hot-item" v-for="item in hotlist" :key='item.id' @tap="handleToCity(item)">
+							<div class="city-item">{{item.nm}}</div>
+						</li>
+	                    <!-- <li class="hot-item"><div class="city-item">北京</div></li>
+	                    <li class="hot-item"><div class="city-item">北京</div></li>
+	                    <li class="hot-item"><div class="city-item">北京</div></li>
+	                    <li class="hot-item"><div class="city-item">北京</div></li> -->
+					</ul>
+				</div>
+				<div class="citys" ref="citys">
+					<div class="city-area" v-for="item in cityList" :key='item.index'>
+						<div class="city-title">{{item.index}}</div>
+						<ul class="city-list">
+							<li class="city" v-for="city in item.list" :key='city.nm' @tap="handleToCity(city)">{{city.nm}}</li>
+						</ul>
+					</div>	
+				</div>			
+			</div>
+			<div class="city-index">
+				<ul class="index-list">
+					<li class="index-item" 
+						v-for="(item, index) in cityList" 
+						:key='item.index'
+						@touchstart="handleToIndex(index)"			
+					>{{item.index}}</li>
 				</ul>
 			</div>
-			<div class="citys" ref="citys">
-				<div class="city-area" v-for="item in cityList" :key='item.index'>
-					<div class="city-title">{{item.index}}</div>
-					<ul class="city-list">
-						<li class="city" v-for="city in item.list" :key='city.nm'>{{city.nm}}</li>
-					</ul>
-				</div>	
-			</div>			
-		</div>
-		<div class="city-index">
-			<ul class="index-list">
-				<li class="index-item" 
-					v-for="(item, index) in cityList" 
-					:key='item.index'
-					@touchstart="handleToIndex(index)"			
-				>{{item.index}}</li>
-			</ul>
-		</div>
+		</scroll>
 	</div>
 </template>
 
 <script>
 	import { getCityData } from '@/api/request'
+	import { mapMutations} from "vuex"
 	import Bscroll from 'better-scroll'
+	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'city',
+		components: {
+			Scroll
+		},
 		data(){
 			return {
 				cityList: [],
-				hotlist: []
+				hotlist: [],
+				loading: true
 			}
 		},
 		methods: {
+			...mapMutations('city', {
+				setcity: 'SET_CITY'
+			}),
 			async getData(){
 				const result = await getCityData()
 				if(result.data.msg === 'ok'){
 					let cities = result.data.data.cities
 					this.formatCityList(cities)
+					this.loading = false
 				}
 			},
 			formatCityList(data){
@@ -72,22 +85,38 @@
 				})
 				this.cityList = cityList
 				this.hotlist = data.filter(item => item.isHot === 1)
+				localStorage.setItem('CITY_LIST',JSON.stringify(this.cityList))
+				localStorage.setItem('HOST_LIST',JSON.stringify(this.hotlist))
 			},
 			handleToIndex(index){
 				let cityIndex = this.$refs.citys.getElementsByClassName('city-area')
 				let element = cityIndex[index]				
-				this.scroll.scrollToElement(element)			
+				this.$refs.scroll.scrollToElement(element)			
+			},
+			handleToCity(item){
+				this.setcity(item)
+				localStorage.setItem('CITY', item.nm)
+				localStorage.setItem('CITY_ID', item.id)
+				this.$router.push('/movie')
 			}
 		},
 		created(){
-			this.getData()
+			let cityList = JSON.parse(localStorage.getItem('CITY_LIST'))
+			let hotlist = JSON.parse(localStorage.getItem('HOST_LIST'))
+			if(cityList && hotlist){
+				this.loading = false
+				this.cityList = cityList
+				this.hotlist = hotlist
+			}else{
+				this.getData()
+			}
 		},
 		watch:{
-			cityList(){
-				this.$nextTick(() => {
-			        this.scroll = new Bscroll(this.$refs.city)
-			    })
-			}
+			// cityList(){
+			// 	this.$nextTick(() => {
+			//         this.scroll = new Bscroll(this.$refs.city)
+			//     })
+			// }
 		}
 
 	}
