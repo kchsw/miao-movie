@@ -1,40 +1,55 @@
 <template>
 	<div id="cinema-list">
-		<div class="cinema-item" v-for="item in cinemaList" :key="item.id">
-			<div class="name">
-                <span>{{item.nm}}</span>
-                <span class="money"><span class="price">{{item.sellPrice}}</span> 元起</span>
-            </div>
-            <div class="address">
-                <div>地址: {{item.addr}}</div>
-                <div>距离: {{item.distance}}</div>
-            </div>
-            <div class="card">
-                <div class="type" 
-                	v-for="(num,key) in item.tag"
-                	v-if="num===1"
-                	:class="type[key].class"
-                >{{type[key].desc}}</div>          
-            </div>
-		</div>
+		<scroll class="recommend-content" :data="cinemaList" ref="scroll">
+			<div class="cinema-wrapper">					
+				<div class="cinema-item" v-for="item in cinemaList" :key="item.id">
+					<div class="name">
+		                <span>{{item.nm}}</span>
+		                <span class="money"><span class="price">{{item.sellPrice}}</span> 元起</span>
+		            </div>
+		            <div class="address">
+		                <div>地址: {{item.addr}}</div>
+		                <div>距离: {{item.distance}}</div>
+		            </div>
+		            <div class="card">
+		                <div class="type" 
+		                	v-for="(num,key) in item.tag"
+		                	v-if="num===1"
+		                	:class="type[key].class"
+		                >{{type[key].desc}}</div>          
+		            </div>
+				</div>
+			</div>
+		</scroll>
+		<loading v-show="loaing"></loading>
 	</div>
 </template>
 
 <script>
 	import { getCinemaData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
+	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'cinema-list',
+		components: {
+			Scroll
+		},
 		data(){
 			return {
-				cinemaList: []
+				cinemaList: [],
+				loaing: true
 			}
+		},
+		computed: {
+			...mapState('city', ['id']),
 		},
 		methods: {
 			async getData(){
-				const result = await getCinemaData(10)
+				const result = await getCinemaData(this.id)
 				if(result.data.msg === 'ok'){
 					let cinemas = result.data.data.cinemas
-					this.cinemaList = cinemas			
+					this.cinemaList = cinemas
+					this.loaing = false			
 				}
 			}
 		},
@@ -46,6 +61,12 @@
 				sell: { desc: "折扣卡", class: 'ol' },
 				snack: { desc: "小吃", class: 'ol' }
 			}
+		},
+		watch: {
+			id(){
+				this.loaing = true
+				this.getData()
+			}
 		}
 	}
 </script>
@@ -56,6 +77,7 @@
 		padding: 0 22px 22px;
 		box-sizing: border-box;
 		overflow: hidden;
+		font-size: 22px;
 		&::-webkit-scrollbar{
 			background-color:transparent;
     		width:0;

@@ -1,44 +1,63 @@
 <template>
 	<div id="coming">
-		<div class="movie">
-			<div class="movie-item" v-for="item in comingList" :key="item.id">
-				<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
-                <div class="info-list">
-                    <h2>{{item.nm}}</h2>
-                    <p><span class="grade">{{item.wish}}</span> 人想看</p>
-                    <p>主演: {{item.star}}</p>
-                    <p>{{item.showInfo}}</p>
-                    <img class="version" :src='version' v-if="item.version">
-                </div>
-                <div class="btn-pre">
-                    预售
-                </div>
+		<loading v-if="loaing"></loading>
+		<scroll class="recommend-content" v-else :data="comingList" ref="scroll">
+			<div class="movie">
+				<div class="movie-item" v-for="item in comingList" :key="item.id">
+					<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
+	                <div class="info-list">
+	                    <h2>{{item.nm}}</h2>
+	                    <p><span class="grade">{{item.wish}}</span> 人想看</p>
+	                    <p>主演: {{item.star}}</p>
+	                    <p>{{item.showInfo}}</p>
+	                    <img class="version" :src='version' v-if="item.version">
+	                </div>
+	                <div class="btn-pre">
+	                    预售
+	                </div>
+				</div>
 			</div>
-		</div>
+		</scroll>
 	</div>
 </template>
 
 <script>
 	import { getMovieComingData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
+	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'coming',
+		components: {
+			Scroll
+		},
 		data(){
 			return {
 				comingList: [],
-				version: require("@/assets/maxs.png")
+				version: require("@/assets/maxs.png"),
+				loaing: true
 			}
+		},
+		computed: {
+			...mapState('city', ['id']),
 		},
 		methods: {
 			async getData(){
-				const result = await getMovieComingData(10)
+				const result = await getMovieComingData(this.id)
 				if(result.data.msg === 'ok'){
 					let comingList = result.data.data.comingList
 					this.comingList = comingList
+					this.loaing = false
 				}
 			}
 		},
 		created(){
 			this.getData()
+		},
+		watch: {
+			id(){
+				this.loaing = true
+				this.getData()
+			}
 		}
 	}
 </script>
@@ -46,7 +65,7 @@
 <style lang="scss" scoped>
 	#coming{
 		height: 100%;
-		padding: 0 16px;
+		padding: 0 16px 30px;
 		box-sizing: border-box;
 		overflow: hidden;
 		&::-webkit-scrollbar{

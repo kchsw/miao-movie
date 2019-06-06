@@ -1,59 +1,75 @@
 <template>
 	<div id="playing">
-		<div class="movie">
-			<div class="movie-item" v-for="item in movieList" :key="item.id">
-				<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
-                <div class="info-list">
-                    <h2>{{item.nm}}</h2>
-                    <p>观众评分: <span class="grade">{{item.sc}}</span></p>
-                    <p>主演: {{item.star}}</p>
-                    <p>{{item.showInfo}}</p>
-                    <img class="version" :src='version' v-if="item.version">
-                </div>
-                <div class="btn-mall">
-                    购票
-                </div>
+		<loading v-if="loaing"></loading>	
+		<scroll class="recommend-content" v-else :data="movieList" :listenScroll="true" ref="scroll" @scroll="handleScroll" @touchEnd="handleTouchEnd">
+			<div class="movie">
+				<div class="tip" v-show="pullDown">正在更新..</div>
+				<div class="movie-item" v-for="item in movieList" :key="item.id">
+					<div class="pic-show" @tap="handleToDetail"><img :src="item.img | setWH('128.180')"></div>
+	                <div class="info-list">
+	                    <h2>{{item.nm}}</h2>
+	                    <p>观众评分: <span class="grade">{{item.sc | score}}</span></p>
+	                    <p>主演: {{item.star}}</p>
+	                    <p>{{item.showInfo}}</p>
+	                    <img class="version" :src='version' v-if="item.version">
+	                </div>
+	                <div class="btn-mall">
+	                    购票
+	                </div>
+				</div>
 			</div>
-			<!-- <div class="movie-item">
-				<div class="pic-show"><img src="https://p0.meituan.net/movie/f29c0f9ff0340d00085f4bc1a395ecf02603950.jpg@160w_220h_1e_1c"></div>
-                <div class="info-list">
-                    <h2>无名之辈</h2>
-                    <p>观众评分 <span class="grade">9.2</span></p>
-                    <p>主演: 陈建斌,任素汐,潘斌龙陈建斌,任素汐,潘斌龙</p>
-                    <p>今天55家影院放映607场</p>
-                </div>
-                <div class="btn-mall">
-                    购票
-                </div>
-			</div> -->
-		</div>
+		</scroll>
 	</div>
 </template>
 
 <script>
 	import { getPlayingData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
+	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'playing',
+		components: {
+			Scroll
+		},
 		data(){
 			return {
 				movieList: [],
-				version: require("@/assets/maxs.png")
+				version: require("@/assets/maxs.png"),
+				pullDown: false,
+				loaing: true
 			}
+		},
+		computed: {
+			...mapState('city', ['id']),
 		},
 		methods: {
 			async getData(){
-				const result = await getPlayingData(10)
+				const result = await getPlayingData(this.id)
 				if(result.data.msg === 'ok'){
 					let movieList = result.data.data.movieList
 					this.movieList = movieList
+					this.loaing = false
+					this.pullDown = false
 				}
+			},
+			handleToDetail(){
+				console.log('1')
+			},
+			handleScroll(pos){
+				this.pullDown = pos.y >= 30 ? true : false
+			},
+			handleTouchEnd(){
+				this.getData()
 			}
 		},
 		created(){
 			this.getData()
 		},
 		watch: {
-
+			id(){
+				this.loaing = true
+				this.getData()
+			}
 		}
 	}
 </script>
@@ -61,7 +77,7 @@
 <style lang="scss" scoped>
 	#playing{
 		height: 100%;
-		padding: 0 16px;
+		padding: 0 16px 30px;
 		box-sizing: border-box;
 		overflow: hidden;
 		&::-webkit-scrollbar{
@@ -69,6 +85,11 @@
     		width:0;
 		}
 		.movie{
+			.tip{
+				text-align: center;
+				font-size: 22px;
+				padding-top: 10px;
+			}
 			.movie-item{
 				margin-top:12px; 
 				display: flex; 

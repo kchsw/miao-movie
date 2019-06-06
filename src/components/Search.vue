@@ -7,42 +7,56 @@
             </div>
 		</div>
 		<div class="search-result">
-			<div class="result-wrapper">
-				<h3>电影/电视剧/综艺</h3>
-				<div class="result-list">
-					<div class="result-item" v-for="item in movieList" :key="item.id">
-						<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
-		                <div class="info-list">
-		                    <h2>{{item.nm}}</h2>
-		                    <span class="grade">{{item.sc}}</span>
-		                    <p>{{item.enm}}</p>
-	                        <p>{{item.cat}}</p>
-	                        <p>{{item.pubDesc}}</p>
-		                </div>	              
+			<scroll class="recommend-content" :data="movieList" ref="scroll">
+				<div class="result-wrapper">
+					<h3>电影/电视剧/综艺</h3>
+					<div class="result-list">
+						<div class="result-item" v-for="item in movieList" :key="item.id">
+							<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
+			                <div class="info-list">
+			                    <h2>{{item.nm}}</h2>
+			                    <span class="grade">{{item.sc | score}}</span>
+			                    <p>{{item.enm}}</p>
+		                        <p>{{item.cat}}</p>
+		                        <p>{{item.pubDesc}}</p>
+			                </div>	              
+						</div>
 					</div>
-				</div>
-			</div>		
+				</div>	
+			</scroll>
+			<loading v-show="loading"></loading>	
 		</div>
 	</div>
 </template>
 
 <script>
 	import { getSearchData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
+	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'search',
+		components: {
+			Scroll
+		},
 		data(){
 			return {
 				movieList: [],
 				keyword: '',
-				timer: null
+				timer: null,
+				loading: false
 			}
+		},
+		computed: {
+			...mapState('city', ['id']),
 		},
 		methods: {
 			async getData(){
-				const result = await getSearchData(10, this.keyword)
+				this.loading = true
+				const result = await getSearchData(this.id, this.keyword)
 				const movies = result.data.data.movies
 				if(result.data.msg === 'ok' && movies.list.length){
 					this.movieList = movies.list
+					this.loading = false
 				}
 			}
 		},
@@ -56,7 +70,7 @@
 					return
 				}
 				this.timer = setTimeout(() => {
-					this.getData()
+					this.getData()					
 				}, 500)
 			}
 		}	
@@ -96,7 +110,7 @@
 		}
 		.search-result{
 			height: calc(100vh - 233px);
-			overflow: auto;
+			overflow: hidden;
 			box-sizing: border-box;
     		padding-bottom: 10px;
 			h3{
