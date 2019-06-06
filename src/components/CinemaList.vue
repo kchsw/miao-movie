@@ -27,6 +27,7 @@
 
 <script>
 	import { getCinemaData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
 	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'cinema-list',
@@ -39,9 +40,12 @@
 				loaing: true
 			}
 		},
+		computed: {
+			...mapState('city', ['id']),
+		},
 		methods: {
 			async getData(){
-				const result = await getCinemaData(10)
+				const result = await getCinemaData(this.id)
 				if(result.data.msg === 'ok'){
 					let cinemas = result.data.data.cinemas
 					this.cinemaList = cinemas
@@ -56,6 +60,12 @@
 				endorse: { desc: "退", class: 'bl' },
 				sell: { desc: "折扣卡", class: 'ol' },
 				snack: { desc: "小吃", class: 'ol' }
+			}
+		},
+		watch: {
+			id(){
+				this.loaing = true
+				this.getData()
 			}
 		}
 	}

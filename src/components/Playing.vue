@@ -1,6 +1,7 @@
 <template>
 	<div id="playing">
-		<scroll class="recommend-content" :data="movieList" :listenScroll="true" ref="scroll" @scroll="handleScroll" @touchEnd="handleTouchEnd">
+		<loading v-if="loaing"></loading>	
+		<scroll class="recommend-content" v-else :data="movieList" :listenScroll="true" ref="scroll" @scroll="handleScroll" @touchEnd="handleTouchEnd">
 			<div class="movie">
 				<div class="tip" v-show="pullDown">正在更新..</div>
 				<div class="movie-item" v-for="item in movieList" :key="item.id">
@@ -18,12 +19,12 @@
 				</div>
 			</div>
 		</scroll>
-		<loading v-show="loaing"></loading>	
 	</div>
 </template>
 
 <script>
 	import { getPlayingData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
 	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'playing',
@@ -38,9 +39,12 @@
 				loaing: true
 			}
 		},
+		computed: {
+			...mapState('city', ['id']),
+		},
 		methods: {
 			async getData(){
-				const result = await getPlayingData(10)
+				const result = await getPlayingData(this.id)
 				if(result.data.msg === 'ok'){
 					let movieList = result.data.data.movieList
 					this.movieList = movieList
@@ -62,7 +66,10 @@
 			this.getData()
 		},
 		watch: {
-
+			id(){
+				this.loaing = true
+				this.getData()
+			}
 		}
 	}
 </script>

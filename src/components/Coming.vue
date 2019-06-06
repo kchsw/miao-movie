@@ -1,6 +1,7 @@
 <template>
 	<div id="coming">
-		<scroll class="recommend-content" :data="comingList" ref="scroll">
+		<loading v-if="loaing"></loading>
+		<scroll class="recommend-content" v-else :data="comingList" ref="scroll">
 			<div class="movie">
 				<div class="movie-item" v-for="item in comingList" :key="item.id">
 					<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
@@ -17,12 +18,12 @@
 				</div>
 			</div>
 		</scroll>
-		<loading v-show="loaing"></loading>
 	</div>
 </template>
 
 <script>
 	import { getMovieComingData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
 	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'coming',
@@ -36,9 +37,12 @@
 				loaing: true
 			}
 		},
+		computed: {
+			...mapState('city', ['id']),
+		},
 		methods: {
 			async getData(){
-				const result = await getMovieComingData(10)
+				const result = await getMovieComingData(this.id)
 				if(result.data.msg === 'ok'){
 					let comingList = result.data.data.comingList
 					this.comingList = comingList
@@ -48,6 +52,12 @@
 		},
 		created(){
 			this.getData()
+		},
+		watch: {
+			id(){
+				this.loaing = true
+				this.getData()
+			}
 		}
 	}
 </script>

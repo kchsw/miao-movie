@@ -16,18 +16,67 @@
             <keep-alive>
                 <router-view/>
             </keep-alive>
-        </div>		
+        </div>	
 	</div>
 </template>
 
 <script>
 	import MHeader from "@/components/MHeader"
-    import { getPlayingData  } from '@/api/request'
+    import { messageBox } from "@/components/JS"
+    import { getLocation  } from '@/api/request'
+    import { mapState, mapMutations, mapGetters, mapActions} from "vuex"
 	export default {
 		name: 'movie',
 		components: {
-			MHeader
-		}
+			MHeader,
+            // MessageBox
+		},
+        computed: {
+            ...mapState('city', ['id']),
+        },
+        methods: {
+            ...mapMutations('city', {
+                setcity: 'SET_CITY'
+            }),
+            async location(){
+                const result = await getLocation()
+                if(result.data.msg === 'ok'){
+                    let city = result.data.data              
+                    if(this.id === city.id) return 
+                    messageBox({
+                        title: '定位结果',
+                        content: city.nm,
+                        cancel: '取消',
+                        sure: '切换',
+                        handleCancel(){
+
+                        },
+                        handleOk(){
+                            localStorage.setItem('CITY', city.nm)
+                            localStorage.setItem('CITY_ID', city.id)
+                            window.location.reload()
+                        }
+                    })
+                }
+            }
+        },
+        mounted(){
+            setTimeout(() => {
+                this.location()
+            }, 3000)
+            // messageBox({
+            //     title: '定位结果',
+            //     content: '汉中',
+            //     cancel: '取消',
+            //     sure: '切换',
+            //     handleCancel(){
+            //         console.log(1)
+            //     },
+            //     handleOk(){
+            //         console.log(2)
+            //     }
+            // })
+        }
 	}
 </script>
 

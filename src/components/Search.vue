@@ -31,6 +31,7 @@
 
 <script>
 	import { getSearchData } from '@/api/request'
+	import { mapState,mapMutations,mapGetters,mapActions} from "vuex"
 	import Scroll from '@/components/Scroll'
 	export default {
 		name: 'search',
@@ -45,10 +46,13 @@
 				loading: false
 			}
 		},
+		computed: {
+			...mapState('city', ['id']),
+		},
 		methods: {
 			async getData(){
 				this.loading = true
-				const result = await getSearchData(10, this.keyword)
+				const result = await getSearchData(this.id, this.keyword)
 				const movies = result.data.data.movies
 				if(result.data.msg === 'ok' && movies.list.length){
 					this.movieList = movies.list

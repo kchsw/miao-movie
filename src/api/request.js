@@ -43,6 +43,10 @@ export const getCinemaData = (id) => {
 	})
 }
 
+export const getLocation = () => {
+	return requset.get('/api/getLocation')
+}
+
 
 
 //movieComingList?cityId
