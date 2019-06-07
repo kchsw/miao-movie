@@ -13,7 +13,7 @@
             </router-link>
   		</div>
         <div class="content">
-            <keep-alive>
+            <keep-alive exclude="detail">
                 <router-view/>
             </keep-alive>
         </div>	

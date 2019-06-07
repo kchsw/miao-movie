@@ -5,8 +5,8 @@
 			<div class="movie">
 				<div class="tip" v-show="pullDown">正在更新..</div>
 				<div class="movie-item" v-for="item in movieList" :key="item.id">
-					<div class="pic-show" @tap="handleToDetail"><img :src="item.img | setWH('128.180')"></div>
-	                <div class="info-list">
+					<div class="pic-show" @tap="handleToDetail(item.id)"><img :src="item.img | setWH('128.180')"></div>
+	                <div class="info-list" @tap="handleToDetail(item.id)">
 	                    <h2>{{item.nm}}</h2>
 	                    <p>观众评分: <span class="grade">{{item.sc | score}}</span></p>
 	                    <p>主演: {{item.star}}</p>
@@ -52,8 +52,11 @@
 					this.pullDown = false
 				}
 			},
-			handleToDetail(){
-				console.log('1')
+			handleToDetail(id){
+				this.$router.push({
+					name: 'detail',
+					params: { id }
+				})
 			},
 			handleScroll(pos){
 				this.pullDown = pos.y >= 30 ? true : false
