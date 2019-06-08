@@ -1,11 +1,11 @@
 <template>
 	<div id="coming">
 		<loading v-if="loaing"></loading>
-		<scroll class="recommend-content" v-else :data="comingList" ref="scroll">
+		<scroll  v-else :data="comingList" ref="scroll">
 			<div class="movie">
 				<div class="movie-item" v-for="item in comingList" :key="item.id">
-					<div class="pic-show"><img :src="item.img | setWH('128.180')"></div>
-	                <div class="info-list">
+					<div class="pic-show" @tap="handleToDetail(item.id)"><img :src="item.img | setWH('128.180')"></div>
+	                <div class="info-list" @tap="handleToDetail(item.id)">
 	                    <h2>{{item.nm}}</h2>
 	                    <p><span class="grade">{{item.wish}}</span> 人想看</p>
 	                    <p>主演: {{item.star}}</p>
@@ -48,7 +48,13 @@
 					this.comingList = comingList
 					this.loaing = false
 				}
-			}
+			},
+			handleToDetail(id){
+				this.$router.push({
+					name: 'detail',
+					params: { id }
+				})
+			},
 		},
 		created(){
 			this.getData()

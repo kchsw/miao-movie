@@ -1,6 +1,7 @@
 <template>
 	<div id="cinema-list">
-		<scroll class="recommend-content" :data="cinemaList" ref="scroll">
+		<loading v-if="loaing"></loading>
+		<scroll v-else class="recommend-content" :data="cinemaList" ref="scroll">
 			<div class="cinema-wrapper">					
 				<div class="cinema-item" v-for="item in cinemaList" :key="item.id">
 					<div class="name">
@@ -21,7 +22,6 @@
 				</div>
 			</div>
 		</scroll>
-		<loading v-show="loaing"></loading>
 	</div>
 </template>
 

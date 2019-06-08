@@ -35,6 +35,11 @@ export default new Router({
           path: 'search',
           name: 'search',
           component: () => import('@/components/Search'),
+        },{
+          path: 'detail/:id',
+          name: 'detail',
+          component: () => import('@/components/Detail'),
+          props: true
         }
       ]
     },

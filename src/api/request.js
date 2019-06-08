@@ -47,7 +47,13 @@ export const getLocation = () => {
 	return requset.get('/api/getLocation')
 }
 
-
+export const getDetailData = (id) => {
+	return requset.get('/api/detailmovie', {
+		params: {
+			movieId: id
+		}
+	})
+}
 
 //movieComingList?cityId
 //searchList?cityId&kw=a
