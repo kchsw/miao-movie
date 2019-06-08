@@ -27,7 +27,10 @@
 	#tabbar{
 		width: 100%;
 		height: 60px;
-		background: #eee;
+		background: #f4f4f4;
+        position: fixed;
+        left: 0;
+        bottom: 0;
 		.tab{
 			height: 60px;
 			display: flex;

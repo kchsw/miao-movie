@@ -116,7 +116,11 @@
     		}
 		}
         .content{
-            height: calc(100vh - 160px)
+            // height: calc(100vh - 160px)
+            position: absolute;
+            width: 100%;
+            top: 100px;
+            bottom: 60px;
         }
 	}
 </style>

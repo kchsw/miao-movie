@@ -18,10 +18,13 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #app{
+	height: 100%;
 	.content{
-		height: calc(100vh - 60px);
+		// height: calc(100vh - 60px);
+		height: 100%;
+		// margin-bottom: 50px;
 	}
 }
 </style>
