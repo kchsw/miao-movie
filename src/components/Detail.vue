@@ -43,32 +43,16 @@
 								</div>
 							</li>
 						</ul> -->
-						<!-- <div class="detail-slider">
+						<div class="detail-slider">
 							<swiper :options="options">
 								<swiper-slide v-for="(item,index) in detailMovie.photos" :key="index">
 										<div class="slider-pic">
 											<img :src="item | setWH('210.191')" alt="">
-											1
 										</div>
 								</swiper-slide>							
 							</swiper>
-						</div> -->
+						</div>
 					</div>
-
-					<swiper :options="swiperOption">
-				        <swiper-slide>Slide 1</swiper-slide>
-				        <swiper-slide>Slide 2</swiper-slide>
-				        <swiper-slide>Slide 3</swiper-slide>
-				        <swiper-slide>Slide 4</swiper-slide>
-				        <swiper-slide>Slide 5</swiper-slide>
-				        <swiper-slide>Slide 6</swiper-slide>
-				        <swiper-slide>Slide 7</swiper-slide>
-				        <swiper-slide>Slide 8</swiper-slide>
-				        <swiper-slide>Slide 9</swiper-slide>
-				        <swiper-slide>Slide 10</swiper-slide>
-				        <div class="swiper-pagination" slot="pagination"></div>
-				      </swiper>
-					
 		  		</div>
 		  	</scroll>
 	  	</div>
@@ -96,19 +80,11 @@
 				options: {
 					// autoplay: true,
 					// loop: true,
-					// slidesPerView: 3,
+					slidesPerView: 3,
 	                // spaceBetween: 0,
 	                freeMode: true,
 	                // notNextTick: false,
-				},
-				swiperOption: {
-		          slidesPerView: 3,
-		          spaceBetween: 30,
-		          pagination: {
-		            el: '.swiper-pagination',
-		            clickable: true
-		          }
-		        }
+				}
 			}
 		},
 		methods: {
@@ -131,6 +107,7 @@
 </script>
 
 <style lang="scss" scoped>
+@import "~swiper/dist/css/swiper.css";
 @keyframes slideMove{
     0%{ transform : translateX(100%); }
     100%{ transform : translateX(0); }
@@ -232,7 +209,7 @@
 			}
 			.detail-Stills{
 				width: 100%;
-				// padding: 0 20px 20px;
+				padding: 0 20px 20px;
 				.tip{
 					font-size: 26px;
 					color: #666;
@@ -240,8 +217,11 @@
 				}
 				.detail-slider{
 					width: 100%;
+
 					.slider-pic{
-						height: 300px;
+						height: 160px;
+						display: flex;
+						justify-content: center;
 					}
 				}
 			}
