@@ -3,18 +3,20 @@ import MessageBox from './MessageBox';
 
 export const messageBox = (function(){
 
-	const defaults = {
-		title : '',
-        content : '',
-        cancel : '',
-        sure : '',
-        handleCancel : null,
-        handleOk : null
-	}
-
-	const MyComponent = Vue.extend(MessageBox);
-
+	
 	return function(opts){
+
+        const defaults = {
+            title : '',
+            content : '',
+            cancel : '',
+            sure : '',
+            handleCancel : null,
+            handleOk : null
+        }
+
+        const MyComponent = Vue.extend(MessageBox);
+
 		const options = Object.assign({}, defaults, opts)
 
 		const vm = new MyComponent({

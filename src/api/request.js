@@ -61,3 +61,27 @@ export const getDetailData = (id) => {
 //detailmovie?movieId=345808
 //cinemaList?cityId=10
 //getLocation
+
+export const Login = (data) => {
+	return requset.post('/api2/users/login', data)
+}
+
+export const Logout = () => {
+	return requset.get('/api2/users/logout')
+}
+
+export const Register = (data) => {
+	return requset.post('/api2/users/register', data)
+}
+
+export const verify = (email) => {
+	return requset.get('/api2/users/verify', {
+		params: {
+			email
+		}
+	})
+}
+
+export const findPassword = (data) => {
+	return requset.post('/api2/users//findPassword', data)
+}

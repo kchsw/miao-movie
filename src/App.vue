@@ -20,6 +20,7 @@
 
 <style lang="scss" scoped>
 #app{
+	font-size: 22px;
 	height: 100%;
 	.content{
 		// height: calc(100vh - 60px);

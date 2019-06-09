@@ -4,9 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { Mongoose } = require('./utils/config')
+const session = require('express-session')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var adminRouter = require('./routes/admin');
+
 
 var app = express();
 
@@ -20,8 +23,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: '#@#$%@',
+  resave: false,
+  name: 'sessionId',
+  saveUninitialized: false,
+  cookie: { 
+  	maxAge: 1000 * 60 * 60
+  }
+}))
+
+
 app.use('/', indexRouter);
-app.use('/api/users', usersRouter);
+app.use('/api2/users', usersRouter);
+app.use('/api2/admin', adminRouter)
+
 
 Mongoose.connect()
 

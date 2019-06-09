@@ -4,8 +4,8 @@
 	        <h2 class="msg-title">{{ title }}</h2>
 	        <p class="msg-content">{{ content }}</p>
 	        <div class="msg-confirm">
-	            <div class="option" @touchstart="handleCancel">{{ cancel }}</div>
-	            <div class="option" @touchstart="handleOk">{{ sure }}</div>
+	            <div v-if="cancel" class="option" @touchstart="handleCancel">{{ cancel }}</div>
+	            <div v-if="sure" class="option" @touchstart="handleOk">{{ sure }}</div>
 	        </div>
 	    </div>
 	</div>

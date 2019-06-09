@@ -1,25 +1,62 @@
 <template>
 	<div id="login">
 		<div>
-            <input class="login_text" type="text" placeHolder="账户名/手机号/Email" >
+            <input v-model="username" class="login_text" type="text" placeHolder="账户名/手机号/Email" >
         </div>
         <div>
-            <input class="login_text" type="password" placeHolder="请输入您的密码" >
+            <input v-model="password" class="login_text" type="password" placeHolder="请输入您的密码" >
         </div>
-        <div class="login_btn">
+        <div class="login_btn" @touchstart="handleToLogin">
             <!-- <input type="submit" value="登录"> -->
             登陆
         </div>
         <div class="login_link">
-            <a href="#">立即注册</a>
-            <a href="#">找回密码</a>
+            <router-link to="/mine/register">立即注册</router-link>
+            <router-link to="/mine/findpassword">找回密码</router-link>
         </div>
 	</div>
 </template>
 
 <script>
+	import { Login } from '@/api/request'
+	import { messageBox } from "@/components/JS"
 	export default {
-		name: 'login'
+		name: 'login',
+		data(){
+			return {
+				username: 'kchsw',
+				password: '654321'
+			}
+		},
+		methods: {
+			handleToLogin(){
+				Login({
+					username: this.username,
+					password: this.password
+				}).then(res => {
+					const status = res.data.status
+					const _this = this
+					if(status === 0){
+						messageBox({
+	                        title: '登陆',
+	                        content: '登陆成功',
+                       		sure: '确定',                        
+	                        handleOk(){
+	                        	_this.$router.push({name: 'center'})
+	                        }
+	                    })
+					}else{
+						messageBox({
+	                        title: '登陆',
+	                        content: '登陆失败',	                       
+	                        sure: '确定',
+	                        handleOk(){   
+	                        }
+	                    })
+					}
+				})
+			}
+		}
 	}
 </script>
 
