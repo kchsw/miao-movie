@@ -1,21 +1,40 @@
-const { Email } = require('../utils/config')
+const { Email, avatar } = require('../utils/config')
+const { setCrypto, createVerify } = require('../utils/base')
+const fs = require('fs')
+const url = require('url')
 const UserModel = require('../models/users')
 
 const login = async (req, res, next) => {
-	const { username, password } = req.body
+	const { username, password, verifyCode } = req.body
+
+	if(verifyCode !== req.session.verifyCode){
+		res.send({
+			msg: "验证码错误",
+			status: -2
+		})
+		return 
+	}
 
 	const result = await UserModel.loginFind({
 		username,
-		password
+		password: setCrypto(password)
 	})
 
 	if(result){
 		req.session.username = username
 		req.session.isAdmin = result.isAdmin
-		res.send({
-			msg: '登陆成功',
-			status: 0
-		})
+		req.session.avatar = result.avatar
+		if(result.isFreeze){
+			res.send({
+			 	msg: '账号已冻结',
+				status: -2
+			})
+		}else{
+			res.send({
+				msg: '登陆成功',
+				status: 0
+			})
+		}
 	}else{
 		res.send({
 			msg: '登陆失败',
@@ -26,16 +45,25 @@ const login = async (req, res, next) => {
 
 const register = async (req, res, next) => {
 	const { username, password, email, verify } = req.body
-	if(email === req.session.email && verify === req.session.verify){
+	if(email !== req.session.email && verify !== req.session.verify){
 		res.send({
 			msg: '验证码错误',
 			status: -1
 		})
+		return 
+	}
+
+	if((Email.time - req.session.time) / 1000 > 60){
+		res.send({
+			msg: '验证码过期',
+			status: -3
+		})
+		return 
 	}
 
 	const result = await UserModel.save({
 		username,
-		password,
+		password: setCrypto(password),
 		email
 	})
 
@@ -60,6 +88,7 @@ const verify = async (req, res, next) => {
 
 	req.session.verify = verify
 	req.session.email = email
+	req.session.time = Email.time
 
 	console.log(req.session.verify)
 	console.log(req.session.email)
@@ -112,7 +141,8 @@ const getUser = async (req, res, next) => {
 			data: {
 				username: req.session.username,
 				verify: req.session.verify,
-				isAdmin: req.session.isAdmin
+				isAdmin: req.session.isAdmin,
+				avatar: req.session.avatar
 			}
 		})
 	}else{
@@ -126,7 +156,14 @@ const getUser = async (req, res, next) => {
 const findPassword = async (req, res, next) => {
 	const { email, password, verify } = req.body
 	if(email === req.session.email && verify === req.session.verify){
-		const result = await UserModel.updatePassword(email, password)
+		if((Email.time - req.session.time) / 1000 > 60){
+			res.send({
+				msg: '验证码过期',
+				status: -3
+			})
+			return 
+		}
+		const result = await UserModel.updatePassword(email, setCrypto(password))
 		if(result){
 			res.send({
 				msg: '修改密码成功',
@@ -145,6 +182,34 @@ const findPassword = async (req, res, next) => {
 		})
 	}
 }
+ 
+const verifyCode = async (req, res, next) => {
+	const result = await createVerify(req, res, next)
+	if(result){
+		res.send(result)
+	}
+}
+
+const uploadAvatar = async (req, res, next) => {
+	fs.rename('public/uploads/' + req.file.filename, 'public/uploads/' + req.session.username + '.jpg', (err) => {
+	})
+	const result = await UserModel.updateAvatar(req.session.username, url.resolve(avatar.BASE_URL, req.session.username + '.jpg'))
+	if(result){
+		res.send({
+			msg: '头像修改成功',
+			status: 0,
+			data: {
+				avatar: url.resolve(avatar.BASE_URL, req.session.username + '.jpg?' + Math.random())
+			}
+		})
+	}else{
+		res.send({
+			msg: '头像修改失败',
+			status: -1
+		})
+	}
+}
+
 
 module.exports = {
 	login,
@@ -152,5 +217,7 @@ module.exports = {
 	verify,
 	logout,
 	getUser,
-	findPassword
+	findPassword,
+	verifyCode,
+	uploadAvatar
 }

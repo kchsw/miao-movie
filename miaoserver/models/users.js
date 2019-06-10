@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { avatar } = require('../utils/config')
 const Schema = mongoose.Schema
 let ObjectId = Schema.Types.ObjectId
 mongoose.set('useCreateIndex', true)
@@ -10,7 +11,8 @@ const UserSchema = new Schema({
     email: { type: String, require: true, index: { unique: true } },
 	date: { type: Date, default: Date.now() },
 	isAdmin: { type: Boolean, default: false },
-	isFreeze: { type: Boolean, default: false }
+	isFreeze: { type: Boolean, default: false },
+	avatar: { type: String, default: avatar.BASE_URL + 'default.jpg' }
 })
 
 const UserModel = mongoose.model('user', UserSchema)
@@ -41,8 +43,48 @@ const updatePassword = (email, password) => {
 					})
 }
 
+const userList = () => {
+	return UserModel.find()
+}
+
+const updateFreeze = (email, isFreeze) => {
+	return UserModel.update({ email }, { $set: { isFreeze } })
+					.then(() => {
+						return true
+					})
+					.catch(() => {
+						return false
+					})
+}
+
+const deleteUser = (email) => {
+	return UserModel.deleteOne({ email })
+					.then(() => {
+						return true
+					})
+					.catch(() => {
+						return false
+					})
+}
+
+const updateAvatar = (username, avatar) => {
+	return UserModel.update({ username }, { $set: { avatar } })
+					.then(() => {
+						return true
+					})
+					.catch(() => {
+						return false
+					})
+}
+
+
+
 module.exports = {
 	save,
 	loginFind,
-	updatePassword
+	updatePassword,
+	userList,
+	updateFreeze,
+	deleteUser,
+	updateAvatar
 }

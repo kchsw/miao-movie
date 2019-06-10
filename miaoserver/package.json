@@ -17,6 +17,8 @@
     "jade": "~1.11.0",
     "mongoose": "^5.5.1",
     "morgan": "~1.9.1",
-    "nodemailer": "^6.2.1"
+    "multer": "^1.4.1",
+    "nodemailer": "^6.2.1",
+    "trek-captcha": "^0.4.0"
   }
 }

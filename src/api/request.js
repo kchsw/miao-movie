@@ -83,5 +83,29 @@ export const verify = (email) => {
 }
 
 export const findPassword = (data) => {
-	return requset.post('/api2/users//findPassword', data)
+	return requset.post('/api2/users/findPassword', data)
 }
+
+
+
+export const getUserList = () => {
+	return requset.get('/api2/admin/userlist')
+}
+
+export const updetaFreeze = (data) => {
+	return requset.post('/api2/admin/updetafreeze', data)
+}
+
+export const deleteUser = (data) => {
+	return requset.post('/api2/admin/deleteuser', data)
+}
+
+export const uploadAvatar = (data) => {
+	const config = {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
+	}
+	return requset.post('/api2/users/uploadAvatar', data, config)
+}
+

@@ -48,7 +48,7 @@
 								<swiper-slide v-for="(item,index) in detailMovie.photos" :key="index">
 										<div class="slider-pic">
 											<img :src="item | setWH('210.191')" alt="">
-										</div>
+										</div>									
 								</swiper-slide>							
 							</swiper>
 						</div>
@@ -81,7 +81,7 @@
 					// autoplay: true,
 					// loop: true,
 					slidesPerView: 3,
-	                // spaceBetween: 0,
+	                spaceBetween: 20,
 	                freeMode: true,
 	                // notNextTick: false,
 				}
@@ -116,7 +116,7 @@
 		animation:.3s slideMove;
 	}
 	#detail{
-		position: absolute;
+		position: fixed;
 	    top: 0;
 	    bottom: 0;
 	    left: 0;
@@ -220,9 +220,13 @@
 
 					.slider-pic{
 						height: 160px;
-						display: flex;
-						justify-content: center;
-					}
+						// display: flex;
+						// justify-content: center;
+						img{
+							width: 100%;
+							height: 100%;
+						}
+					}					
 				}
 			}
 		}

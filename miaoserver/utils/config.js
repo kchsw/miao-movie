@@ -31,10 +31,18 @@ const Email = {
 
 	get verify(){
 		return Math.random().toString().slice(2,8)
+	},
+	get time(){
+		return Date.now()
 	}
+}
+
+const avatar = {
+	BASE_URL: 'http://localhost:3000/uploads/'
 }
 
 module.exports = {
 	Mongoose,
-	Email
+	Email,
+	avatar
 }

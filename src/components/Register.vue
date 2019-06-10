@@ -11,7 +11,7 @@
         </div>
         <div class="code-label">
             <input v-model="verify" class="login_text code-input" type="text" placeHolder="验证码" >
-            <div class="code-btn" @touchstart="handleToVerify">获取验证码</div>
+            <div class="code-btn" :class="{'dis-btn': disabled }" @touchstart="handleToVerify">{{this.verifyInfo}}</div>
         </div>
         <div class="login_btn" @touchstart="handleToRegister">
             <!-- <input type="submit" value="登录"> -->
@@ -34,11 +34,14 @@
 				username: 'kkkwww',
 				password: '123456',
 				email: '11111@qq.com',
-				verify: '360943'
+				verify: '360943',
+				verifyInfo: '获取验证码',
+				disabled: false
 			}
 		},
 		methods:{
 			handleToVerify(){
+				if(this.disabled) return 
 				verify(this.email).then(res => {
 					const status = res.data.status
 					const _this = this   
@@ -48,7 +51,7 @@
 	                        content: '验证码发送成功',
                        		sure: '确定',
 	                        handleOk(){
-	                        	
+	                        	_this.countDown()
 	                        }
 	                    })
 					}else{
@@ -86,6 +89,19 @@
 	                    })
 					}
 				})
+			}, 
+			countDown(){
+				this.disabled = true
+				let count = 5
+				let timer = setInterval(() => {
+					count--
+					this.verifyInfo = `剩余${count}秒`
+					if(count == 0){
+						this.disabled = false
+						this.verifyInfo = '发送验证码'
+						clearInterval(timer)
+					}
+				}, 1000)
 			}
 		}
 	}
@@ -147,6 +163,9 @@
 				border-radius: 3px; 
 				color: #fff;
 				margin-left: 10px;
+				&.dis-btn{
+					background: #ec8989;
+				}
 			}
 		}
 	}

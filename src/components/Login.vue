@@ -6,8 +6,11 @@
         <div>
             <input v-model="password" class="login_text" type="password" placeHolder="请输入您的密码" >
         </div>
+        <div class="code-label">
+            <input v-model="verifyCode" class="login_text code-input" type="text" placeHolder="验证码" >
+            <img @touchstart="handleToVerify" :src="verifyImg" alt="">
+        </div>
         <div class="login_btn" @touchstart="handleToLogin">
-            <!-- <input type="submit" value="登录"> -->
             登陆
         </div>
         <div class="login_link">
@@ -25,14 +28,17 @@
 		data(){
 			return {
 				username: 'kchsw',
-				password: '654321'
+				password: '654321',
+				verifyCode: '',
+				verifyImg: "/api2/users/verifyCode?id=" + Math.random()
 			}
 		},
 		methods: {
 			handleToLogin(){
 				Login({
 					username: this.username,
-					password: this.password
+					password: this.password,
+					verifyCode: this.verifyCode
 				}).then(res => {
 					const status = res.data.status
 					const _this = this
@@ -48,13 +54,16 @@
 					}else{
 						messageBox({
 	                        title: '登陆',
-	                        content: '登陆失败',	                       
+	                        content: res.data.msg,	                       
 	                        sure: '确定',
 	                        handleOk(){   
 	                        }
 	                    })
 					}
 				})
+			},
+			handleToVerify(e){
+				e.target.src = "/api2/users/verifyCode?id=" + Math.random()
 			}
 		}
 	}
@@ -95,6 +104,20 @@
 				margin:0 5px; 
 				font-size: 22px; 
 				color:#e54847;
+			}
+		}
+		.code-label{
+			width:100%; 
+			height: 54px; 
+			display: flex;
+			margin-bottom: 10px;
+			img{
+				box-sizing: border-box;
+    			border: 1px solid #e54847;
+			}
+			.code-input{
+				width:70%; 
+				margin: 0 10px 0 0;
 			}
 		}
 	}

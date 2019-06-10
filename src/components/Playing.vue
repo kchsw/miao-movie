@@ -62,7 +62,9 @@
 				this.pullDown = pos.y >= 30 ? true : false
 			},
 			handleTouchEnd(){
-				this.getData()
+				if(this.pullDown){
+					this.getData()
+				}				
 			}
 		},
 		created(){
